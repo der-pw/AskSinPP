@@ -11,8 +11,9 @@
 #define ASKSIN_PLUS_PLUS_IDENTIFIER F("AskSin++ V" ASKSIN_PLUS_PLUS_VERSION " (" __DATE__ " " __TIME__ ")")
 
 
-#define CONFIG_FREQ1 0
-#define CONFIG_FREQ2 1
+#define CONFIG_FREQ1     0
+#define CONFIG_FREQ2     1
+#define CONFIG_BOOTSTATE 2  //location of current boot state for ResetOnBoot
 
 #include <Debug.h>
 #include <stdint.h>
@@ -174,7 +175,8 @@ public:
     if( sc.valid() == true ) {
       uint8_t f1 = sc.getByte(CONFIG_FREQ1);
       uint8_t f2 = sc.getByte(CONFIG_FREQ2);
-      if( f1 != 0 ) {
+      // check if CONFIG_FREQ1 is in range 0x60...0x6A -> 868,3MHz -550kHz/+567kHz
+      if( f1 >= 0x60 && f1 <= 0x6A ) {
         DPRINT(F("Config Freq: 0x21"));DHEX(f1);DHEXLN(f2);
         radio.initReg(CC1101_FREQ2, 0x21);
         radio.initReg(CC1101_FREQ1, f1);
